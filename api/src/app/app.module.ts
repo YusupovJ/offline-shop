@@ -1,16 +1,12 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UserModule } from "../user/user.module";
 import { MongooseModule } from "@nestjs/mongoose";
+import envConfig from "src/config/env.config";
+import { ProductsModule } from "src/users/users.module";
 
 @Module({
-  imports: [
-    UserModule,
-    MongooseModule.forRoot(
-      "mongodb+srv://root:root@cluster0.juhx7wq.mongodb.net/?retryWrites=true&w=majority/offline_shop",
-    ),
-  ],
+  imports: [MongooseModule.forRoot(envConfig.DB_URL), ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })
