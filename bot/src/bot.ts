@@ -1,10 +1,12 @@
 import { Bot } from "grammy";
-import { MyContext, setupSession } from "./session/session";
+import { setupSession } from "./session/session";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { categoryConversation } from "./conversations/category.conversation";
 import { categoryMenu } from "./menus/category.menu";
 import { productMenu } from "./menus/product.menu";
 import envConfig from "./config/env.config";
+import { startConversation } from "./conversations/startConversation";
+import { MyContext } from "./types";
 
 const bot = new Bot<MyContext>(envConfig.BOT_TOKEN);
 bot.use(setupSession);
@@ -16,6 +18,7 @@ categoryMenu.register(productMenu);
 // Conversations
 bot.use(conversations());
 bot.use(createConversation(categoryConversation));
+bot.use(createConversation(startConversation));
 
 bot.api.setMyCommands([
   {
@@ -29,7 +32,7 @@ bot.api.setMyCommands([
 ]);
 
 bot.command("start", async (ctx) => {
-  await ctx.reply("Welcome!");
+  await ctx.conversation.enter("startConversation");
 });
 
 bot.command("category", async (ctx) => {

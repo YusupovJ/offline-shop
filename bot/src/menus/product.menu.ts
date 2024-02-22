@@ -1,7 +1,7 @@
 import { Menu, MenuRange } from "@grammyjs/menu";
-import { MyContext } from "../session/session";
 import { categories } from "../data";
 import { InputMediaBuilder } from "grammy";
+import { MyContext } from "../types";
 
 export const productMenu = new Menu<MyContext>("product__menu").dynamic((ctx) => {
   const range = new MenuRange<MyContext>();
