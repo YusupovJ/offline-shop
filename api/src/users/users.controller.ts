@@ -18,13 +18,13 @@ export class UserController {
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: string) {
-    return await this.userService.findOne(id);
+  async findOne(@Param("id") tgId: string) {
+    return await this.userService.findOne(parseInt(tgId));
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateProductDto: UpdateUserDto) {
-    return this.userService.update(id, updateProductDto);
+  async update(@Param("id") id: string, @Body() updateProductDto: UpdateUserDto) {
+    return await this.userService.update(id, updateProductDto);
   }
 
   @Delete(":id")

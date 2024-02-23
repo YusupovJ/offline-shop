@@ -6,4 +6,5 @@ export class User {
   lastName: string;
   phoneNumber: string;
   tgId: number;
+  role: "admin" | "user";
 }

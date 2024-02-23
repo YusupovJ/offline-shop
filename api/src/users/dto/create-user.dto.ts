@@ -3,4 +3,5 @@ export class CreateUserDto {
   lastName: string;
   phoneNumber: string;
   tgId: number;
+  role?: "admin" | "user";
 }

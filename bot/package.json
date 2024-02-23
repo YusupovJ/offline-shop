@@ -12,6 +12,7 @@
   "dependencies": {
     "@grammyjs/conversations": "^1.2.0",
     "@grammyjs/menu": "^1.2.1",
+    "@grammyjs/storage-free": "^2.4.1",
     "@types/node": "^20.11.19",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",

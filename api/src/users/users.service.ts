@@ -28,18 +28,16 @@ export class UsersService {
     return allUsers;
   }
 
-  async findOne(id: string) {
-    const user = await this.userModel.findById(id).exec();
-
-    if (!user) {
-      throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
-    }
+  async findOne(tgId: number) {
+    const user = await this.userModel.findOne({ tgId }).exec();
 
     return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a ${id} user`;
+    const updated = await this.userModel.updateOne({ _id: id }, updateUserDto);
+
+    return updated;
   }
 
   remove(id: string) {
