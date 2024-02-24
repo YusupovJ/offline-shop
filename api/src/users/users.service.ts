@@ -22,14 +22,19 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll() {
-    const allUsers = await this.userModel.find().exec();
+  async findAll(phoneNumber?: string) {
+    const allUsers = await this.userModel.find({ phoneNumber }).exec();
 
     return allUsers;
   }
 
   async findOne(tgId: number) {
     const user = await this.userModel.findOne({ tgId }).exec();
+
+    return user;
+  }
+  async findById(id: string) {
+    const user = await this.userModel.findById(id).exec();
 
     return user;
   }
