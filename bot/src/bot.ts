@@ -17,91 +17,97 @@ import { changeFirstNameConversation } from "./conversations/changeFirstNameConv
 import { changeLastNameConversation } from "./conversations/changeLastNameConversation";
 import { getUserConversation } from "./conversations/getUserConversation";
 import { sendUserInfo } from "./helpers/sendUserInfo";
+import { AxiosError } from "axios";
+import { authGuard } from "./helpers/authGuard";
+import { roleGuard } from "./helpers/roleGuard";
+import { deleteAccountMenu } from "./menus/deleteAccount.menu";
 
 const bot = new Bot<MyContext>(envConfig.BOT_TOKEN);
 bot.use(setupSession(bot.token));
-
-// Menus
-bot.use(categoryMenu);
-bot.use(accountMenu);
-categoryMenu.register(productMenu);
-
-// Conversations
 bot.use(conversations());
-bot.use(createConversation(categoryConversation));
-bot.use(createConversation(startConversation));
+
+// Account
 bot.use(createConversation(changeFirstNameConversation));
 bot.use(createConversation(changeLastNameConversation));
+bot.use(accountMenu);
+accountMenu.register(deleteAccountMenu);
+
+// Category
+bot.use(categoryMenu);
+categoryMenu.register(productMenu);
+bot.use(createConversation(categoryConversation));
+
+// Other conversations
+bot.use(createConversation(startConversation));
 bot.use(createConversation(getUserConversation));
 
 // Commands
 bot.api.setMyCommands([
-  {
-    command: "start",
-    description: "Starts the bot",
-  },
-  {
-    command: "category",
-    description: "To see categories tap this command",
-  },
-  {
-    command: "account",
-    description: "Account settings",
-  },
-  {
-    command: "searchuser",
-    description: "Get any user having phone number",
-  },
+	{
+		command: "start",
+		description: "Starts the bot",
+	},
+	{
+		command: "category",
+		description: "To see categories tap this command",
+	},
+	{
+		command: "account",
+		description: "Account settings",
+	},
+	{
+		command: "searchuser",
+		description: "Get any user having phone number",
+	},
 ]);
 
 bot.command("start", async (ctx) => {
-  try {
-    const userId = ctx.from?.id as number;
-    const user = await query.get<IUser | null>(`/users/${userId}`);
+	const userId = ctx.from?.id as number;
+	const { data } = await query.get<IUser[]>(`/users?tgId=${userId}`);
+	const me = data[0];
 
-    if (user.data) {
-      ctx.session.userInfo = user.data;
-      await ctx.reply(`Welcome ${user.data.lastName} ${user.data.firstName}!`);
-    } else {
-      await ctx.conversation.enter("startConversation");
-    }
-  } catch (error) {
-    await ctx.reply("Something went wrong :(");
-  }
+	if (me) {
+		ctx.session.me = me;
+		await ctx.reply(`Welcome ${me.lastName} ${me.firstName}!`);
+	} else {
+		await ctx.conversation.enter("startConversation");
+	}
 });
 
-bot.command("category", async (ctx) => {
-  await ctx.conversation.enter("categoryConversation");
+bot.command("category", authGuard, async (ctx) => {
+	await ctx.conversation.enter("categoryConversation");
 });
 
-bot.command("account", async (ctx) => {
-  try {
-    const userId = ctx.from?.id as number;
-    const { data: userInfo } = await query.get<IUser>(`/users/${userId}`);
+bot.command("account", authGuard, async (ctx) => {
+	const userId = ctx.from?.id as number;
+	const { data } = await query.get<IUser[]>(`/users?tgId=${userId}`);
+	const me = data[0];
 
-    if (userInfo) {
-      ctx.session.userInfo = userInfo;
-      await sendUserInfo(ctx, userInfo);
-    } else {
-      await ctx.reply("Please sign up! /start");
-    }
-  } catch (error) {
-    await ctx.reply("Something went wrong :(");
-  }
+	if (me) {
+		ctx.session.me = me;
+		ctx.session.searchUser = me;
+		await sendUserInfo(ctx, me);
+	} else {
+		await ctx.reply("Please sign up! /start");
+	}
 });
 
-bot.command("searchuser", async (ctx) => {
-  await ctx.conversation.enter("getUserConversation");
+bot.command("searchuser", authGuard, roleGuard, async (ctx) => {
+	await ctx.conversation.enter("getUserConversation");
 });
 
 // Error handling
-bot.catch((error) => {
-  console.log(error.message);
+bot.catch((info) => {
+	const error = info.error;
+	if (error instanceof AxiosError) {
+		console.log(info);
+		info.ctx.reply(error.response?.data.message);
+	}
 });
 
 // Starting bot
 bot.start({
-  onStart() {
-    console.log("Bot started");
-  },
+	onStart() {
+		console.log("Bot started");
+	},
 });

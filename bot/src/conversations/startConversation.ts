@@ -23,17 +23,13 @@ export async function startConversation(conversation: MyConversation, ctx: MyCon
 		tgId: ctx.from?.id,
 	};
 
-	try {
-		const { data } = await query.post<IUser>("/users", userInfo);
+	const { data } = await query.post<IUser>("/users", userInfo);
 
-		conversation.session.userInfo = data;
+	conversation.session.me = data;
 
-		await ctx.reply(`Congratulations 🎉! Welcome ${data.lastName} ${data.firstName}.`, {
-			reply_markup: {
-				remove_keyboard: true,
-			},
-		});
-	} catch (error) {
-		await ctx.reply("Somethin went wrong :(");
-	}
+	await ctx.reply(`Congratulations 🎉! Welcome ${data.lastName} ${data.firstName}.`, {
+		reply_markup: {
+			remove_keyboard: true,
+		},
+	});
 }

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from "@nestj
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { GetUserDto } from "./dto/get-user.dto";
+import { GetUserQuery } from "./dto/get-user.query";
 
 @Controller("users")
 export class UserController {
@@ -10,18 +10,19 @@ export class UserController {
 
   @Post()
   async create(@Body() createProductDto: CreateUserDto) {
-    return await this.userService.create(createProductDto);
+    try {
+      return await this.userService.create(createProductDto);
+    } catch (error) {}
   }
 
   @Get()
-  async findAll(@Query() query: GetUserDto) {
-    const phoneNumber = query.phoneNumber && `+${query.phoneNumber.slice(1)}`;
-    return await this.userService.findAll(phoneNumber);
+  async findAll(@Query() query: GetUserQuery) {
+    return await this.userService.findAll(query);
   }
 
   @Get("/:id")
-  async findOne(@Param("id") tgId: string) {
-    return await this.userService.findOne(parseInt(tgId));
+  async findOne(@Param("id") id: string) {
+    return await this.userService.findById(id);
   }
 
   @Patch(":id")

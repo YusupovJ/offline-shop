@@ -4,6 +4,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "./schemas/users.schema";
 import { Model } from "mongoose";
+import { GetUserQuery } from "./dto/get-user.query";
 
 @Injectable()
 export class UsersService {
@@ -22,30 +23,29 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll(phoneNumber?: string) {
-    const allUsers = await this.userModel.find({ phoneNumber }).exec();
+  async findAll(query?: GetUserQuery) {
+    const phoneNumber = query.phoneNumber || "";
+
+    const allUsers = await this.userModel.find({
+      ...query,
+      phoneNumber: { $regex: ".*" + phoneNumber + ".*" },
+    });
 
     return allUsers;
   }
 
-  async findOne(tgId: number) {
-    const user = await this.userModel.findOne({ tgId }).exec();
-
-    return user;
-  }
   async findById(id: string) {
-    const user = await this.userModel.findById(id).exec();
-
+    const user = await this.userModel.findById(id);
     return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const updated = await this.userModel.updateOne({ _id: id }, updateUserDto);
-
+    const updated = await this.userModel.findByIdAndUpdate(id, updateUserDto);
     return updated;
   }
 
-  remove(id: string) {
-    return `This action removes a ${id} user`;
+  async remove(id: string) {
+    const removed = await this.userModel.findByIdAndDelete(id);
+    return removed;
   }
 }
