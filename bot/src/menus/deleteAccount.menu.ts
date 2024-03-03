@@ -4,7 +4,7 @@ import query from "../config/axios.config";
 import { userMessage } from "../helpers/sendUserInfo";
 
 export const deleteAccountMenu = new Menu<MyContext>("delete__menu").dynamic(async (ctx, range) => {
-	const userInfo = ctx.session.searchUser as IUser;
+	const userInfo = ctx.session.user.searchUser as IUser;
 
 	range.text("Yes", async (ctx) => {
 		await query.delete(`/users/${userInfo._id}`);

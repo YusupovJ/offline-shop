@@ -10,7 +10,11 @@ export class CategoryService {
   constructor(@InjectModel(Category.name) private categoryModel: Model<Category>) {}
 
   async create(createCategoryDto: CreateCategoryDto) {
-    return await this.categoryModel.create(createCategoryDto);
+    const newCategory = await this.categoryModel.create(createCategoryDto);
+
+    await newCategory.save();
+
+    return newCategory;
   }
 
   findAll() {

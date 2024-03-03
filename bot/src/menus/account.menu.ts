@@ -17,22 +17,22 @@ export const accountMenu = new Menu<MyContext>("account__menu").dynamic((ctx, ra
 		await ctx.editMessageText("Are you sure you want to delete the account?");
 	});
 
-	if (ctx.session.me?.role === "admin") {
+	if (ctx.session.user.me?.role === "admin") {
 		range.text(
 			(ctx) => {
-				const isAdmin = ctx.session.searchUser?.role === "admin" ? "✅" : "❌";
+				const isAdmin = ctx.session.user.searchUser?.role === "admin" ? "✅" : "❌";
 				return `admin ${isAdmin}`;
 			},
 			async (ctx) => {
-				if (ctx.session.searchUser) {
-					const { searchUser } = ctx.session;
+				if (ctx.session.user.searchUser) {
+					const { searchUser } = ctx.session.user;
 					const newRole = searchUser.role === "admin" ? "user" : "admin";
 
 					await query.patch(`/users/${searchUser._id}`, {
 						role: newRole,
 					});
 
-					ctx.session.searchUser.role = newRole;
+					ctx.session.user.searchUser.role = newRole;
 
 					ctx.menu.update();
 				}

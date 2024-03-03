@@ -1,6 +1,6 @@
 import { Keyboard } from "grammy";
-import { IUser, MyContext, MyConversation } from "../types";
-import query from "../config/axios.config";
+import { IUser, MyContext, MyConversation } from "../../types";
+import query from "../../config/axios.config";
 
 export async function startConversation(conversation: MyConversation, ctx: MyContext) {
 	await ctx.reply("Hello. Welcome to offline shop! Please sign up!");
@@ -25,7 +25,7 @@ export async function startConversation(conversation: MyConversation, ctx: MyCon
 
 	const { data } = await query.post<IUser>("/users", userInfo);
 
-	conversation.session.me = data;
+	conversation.session.user.me = data;
 
 	await ctx.reply(`Congratulations 🎉! Welcome ${data.lastName} ${data.firstName}.`, {
 		reply_markup: {

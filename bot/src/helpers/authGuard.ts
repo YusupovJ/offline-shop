@@ -8,10 +8,10 @@ export async function authGuard(ctx: MyContext, next: NextFunction) {
 
 	if (data[0]) {
 		const me = JSON.stringify(data[0]);
-		const savedUser = JSON.stringify(ctx.session.me);
+		const savedUser = JSON.stringify(ctx.session.user.me);
 
 		if (me !== savedUser) {
-			ctx.session.me = data[0];
+			ctx.session.user.me = data[0];
 		}
 
 		await next();

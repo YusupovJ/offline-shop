@@ -10,9 +10,7 @@ export class UserController {
 
   @Post()
   async create(@Body() createProductDto: CreateUserDto) {
-    try {
-      return await this.userService.create(createProductDto);
-    } catch (error) {}
+    return await this.userService.create(createProductDto);
   }
 
   @Get()

@@ -1,6 +1,6 @@
-import query from "../config/axios.config";
-import { sendUserInfo } from "../helpers/sendUserInfo";
-import { MyConversation, MyContext, IUser } from "../types";
+import query from "../../config/axios.config";
+import { sendUserInfo } from "../../helpers/sendUserInfo";
+import { MyConversation, MyContext, IUser } from "../../types";
 
 export async function getUserConversation(conversation: MyConversation, ctx: MyContext) {
 	await ctx.reply("Please send phone number of the user:");
@@ -18,7 +18,7 @@ export async function getUserConversation(conversation: MyConversation, ctx: MyC
 		return;
 	}
 
-	conversation.session.searchUser = userInfo[0];
+	conversation.session.user.searchUser = userInfo[0];
 
 	await sendUserInfo(ctx, userInfo[0]);
 }
