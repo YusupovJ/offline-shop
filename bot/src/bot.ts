@@ -113,7 +113,7 @@ bot.catch((info) => {
 		console.log(info);
 		info.ctx.reply(error.response?.data.message);
 	} else {
-		console.log(info);
+		console.log(info.message);
 	}
 });
 

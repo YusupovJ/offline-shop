@@ -4,14 +4,16 @@ import { Context, SessionFlavor } from "grammy";
 export type MyConversation = Conversation<MyContext>;
 
 export interface SessionData {
-	pagination: {
-		categoryId: number;
-		productId: number;
+	category: {
+		page: number;
+		totalPages?: number;
+		currentCategory?: ICategory;
 	};
 	user: {
 		me?: IUser;
 		searchUser?: IUser;
 	};
+	conversation: {};
 }
 
 export type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor;
@@ -25,8 +27,8 @@ export interface IProduct {
 }
 
 export interface ICategory {
-	id: number;
-	name: string;
+	_id: string;
+	title: string;
 	image: string;
 	description: string;
 	products: IProduct[];

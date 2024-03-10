@@ -5,14 +5,14 @@ import { freeStorage } from "@grammyjs/storage-free";
 export const setupSession = (token: string) => {
 	return session<SessionData, MyContext>({
 		type: "multi",
-		pagination: {
+		category: {
 			initial: () => ({
-				categoryId: 0,
-				productId: 0,
+				page: 1,
 			}),
 		},
 		user: {
 			storage: freeStorage(token),
 		},
+		conversation: {},
 	});
 };

@@ -1,5 +1,5 @@
 import query from "../../config/axios.config";
-import { MyContext, MyConversation } from "../../types";
+import { ICategory, MyContext, MyConversation } from "../../types";
 
 export async function createCategoryConversation(conversation: MyConversation, ctx: MyContext) {
 	await ctx.reply("Enter the title:");
@@ -12,9 +12,15 @@ export async function createCategoryConversation(conversation: MyConversation, c
 	const file = (await conversation.waitFor(":file")).message?.photo!;
 	const image = file[file?.length - 1];
 
-	await query.post("/category", {
+	const { data: newCategory } = await query.post<ICategory>("/category", {
 		title,
 		description,
 		image: image.file_id,
+	});
+
+	await ctx.reply("You successfully created category!");
+
+	await ctx.replyWithPhoto(newCategory.image, {
+		caption: newCategory.description,
 	});
 }

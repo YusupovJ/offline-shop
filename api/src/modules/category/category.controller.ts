@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, Query } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
-import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { GetCategoryQuery } from "./dto/get-category.query";
 
 @Controller("category")
 export class CategoryController {
@@ -13,22 +13,14 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
-  }
+  async findAll(@Query() query: GetCategoryQuery) {
+    const { categories, pagination } = await this.categoryService.findAll(query);
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.categoryService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+    return { categories, pagination };
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.categoryService.remove(+id);
+  async remove(@Param("id") id: string) {
+    return await this.categoryService.remove(id);
   }
 }
